@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Main {
+
     public static void main(String[] args) {
         System.out.println(minSpeedOnTime(new int[]{1, 1, 10000}, 2.01));
     }
@@ -60,30 +61,32 @@ public class Main {
         return k;
     }
 
-    public int removeDuplicates(int[] nums) {
-        int[] nums1 = new int[nums.length];
-        int k = 0;
-        for (int i = 0; i < nums.length; i++) {
-            nums1[i] = nums[i];
+    public class T4 {
+        public int removeDuplicates(int[] nums) {
+            int[] nums1 = new int[nums.length];
+            int k = 0;
+            for (int i = 0; i < nums.length; i++) {
+                nums1[i] = nums[i];
+            }
+            for (int i : nums1) {
+                boolean flag = false;
+                for (int j = 0; j < k; j++)
+                    if (i == nums[j]) {
+                        flag = true;
+                    }
+                if (!flag) nums[k++] = i;
+            }
+            return k;
         }
-        for (int i : nums1) {
-            boolean flag = false;
-            for (int j = 0; j < k; j++)
-                if (i == nums[j]) {
-                    flag = true;
-                }
-            if (!flag) nums[k++] = i;
-        }
-        return k;
-    }
 
-    public int removeDuplicate2(int[] nums) {
-        int k = 0;
-        for (int i = 0; i < nums.length - 1; i++) {
-            if (nums[i] != nums[i + 1]) nums[k++] = nums[i];
-        }//有的题目不需要复制原数组，在更新过程中不影响到后面的数据就可以
-        nums[k++] = nums[nums.length - 1];
-        return k;
+        public int removeDuplicate2(int[] nums) {
+            int k = 0;
+            for (int i = 0; i < nums.length - 1; i++) {
+                if (nums[i] != nums[i + 1]) nums[k++] = nums[i];
+            }//有的题目不需要复制原数组，在更新过程中不影响到后面的数据就可以
+            nums[k++] = nums[nums.length - 1];
+            return k;
+        }
     }
 
     public int removeDuplicatesMedium(int[] nums) {
@@ -112,12 +115,123 @@ public class Main {
         }
         return -1;
     }
+
+    public static void reverse(int[] nums, int start, int end) {
+        while (end > start) {
+            int temp = nums[start];
+            nums[start] = nums[end];
+            nums[end] = temp;
+            start++;
+            end--;
+        }
+    }
+
     public void rotate(int[] nums, int k) {
-     for(int i=0;i<k;i++){
-         int end=nums[nums.length-1];
-         for(int j=1;j< nums.length;j++){
-             nums[j]=nums[j-1];
-         }
-         nums[0]=end;
-    }}
+        k %= nums.length;
+        reverse(nums, 0, nums.length - 1);
+        reverse(nums, 0, k - 1);
+        reverse(nums, k, nums.length - 1);
+    }
+
+    public class T7 {
+        //1遍历过程中可以知道已遍历元素的最值
+        //2去找一个元素后面元素的最值需要遍历这个元素后面的所有元素
+        //能用1不用2
+        public int maxProfit(int[] prices) {
+            //对每一个元素找他后面最高的卖出点，在找总最高例如利润
+            //每个元素后面最高卖出点每个元素都需要遍历 O(n)
+            int maxProfit = 0;
+            int frontMax = 0;
+            for (int i = 1; i < prices.length; i++) {
+                if (frontMax < prices[i]) frontMax = prices[i];
+            }
+            maxProfit = frontMax - prices[0];
+            for (int i = 1; i < prices.length; i++) {
+                if (prices[i] == frontMax) {
+                    frontMax = 0;
+                    for (int j = i + 1; j < prices.length; j++) {
+                        if (frontMax < prices[j]) frontMax = prices[j];
+                    }
+                }
+                maxProfit = maxProfit < frontMax - prices[i] ? frontMax - prices[i] : maxProfit;
+            }
+            if (maxProfit > 0) return maxProfit;
+            else return 0;
+
+            //总复杂度：最小O(n) 最大O(n^2)
+        }
+
+        public int maxProfit_Nice(int[] prices) {
+            //对每一个元素找他前面最低的买入点得这个点最高的利润，再找总最高利润
+            //每个元素之前最低买入点前面就记录好了 O(1)
+            int buy = Integer.MAX_VALUE, sell = 0;
+            for (int i = 0; i < prices.length; i++) {
+                buy = Math.min(buy, prices[i]);
+                sell = Math.max(sell, prices[i] - buy);
+            }
+            return sell;
+            //总复杂度：O(n)
+        }
+    }
+
+    class T8 {
+        //贪心
+        public int maxProfit(int[] prices) {
+            int sum = 0;
+            for (int i = 0; i < prices.length - 1; i++) {
+                sum += prices[i] < prices[i + 1] ? prices[i + 1] - prices[i] : 0;
+            }
+            return sum;
+        }
+    }
+    class T9 {
+        //递归
+        public boolean canJump(int[] nums) {
+            return jumpTo(nums,nums.length-1);
+        }
+        public boolean jumpTo(int[] nums,int index){
+            if(index==0)
+                return true;
+            for(int i= index-1;i>=0;i--){
+                if(nums[i]>=index-i)
+                    return jumpTo(nums,i);
+            }
+            return false;
+        }
+    }
+    class T10 {
+        //从数组前面开始递归
+        public int jump(int[] nums) {
+            return jumpTo(nums, nums.length - 1, 0);
+        }
+
+        public int jumpTo(int[] nums, int index, int deep) {
+            if (index == 0)
+                return deep;
+            for (int i = 0; i < index; i++) {
+                if (nums[i] >= index - i)
+                    return jumpTo(nums, i,++deep);
+            }
+            return -1;
+        }
+        //nice!为每个元素找出从他及之前的元素最远能走到的地方w
+        int jump(vector<int>& nums) {
+
+            for(int i = 1; i < nums.size(); i++)
+            {
+                nums[i] = max(nums[i] + i, nums[i-1]);
+            }
+
+            int ind = 0;
+            int ans = 0;
+
+            while(ind < nums.size() - 1)
+            {
+                ans++;
+                ind = nums[ind];
+            }
+
+            return ans;
+        }
+    }
 }
