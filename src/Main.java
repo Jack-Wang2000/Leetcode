@@ -1,7 +1,5 @@
 import java.math.BigDecimal;
-import java.util.Dictionary;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class Main {
 
@@ -215,22 +213,78 @@ public class Main {
             return -1;
         }
         //nice!为每个元素找出从他及之前的元素最远能走到的地方w
-        int jump(vector<int>& nums) {
+        public int jump_Nice(int[] nums) {
 
-            for(int i = 1; i < nums.size(); i++)
+            for(int i = 1; i < nums.length; i++)
             {
-                nums[i] = max(nums[i] + i, nums[i-1]);
+                nums[i] = Math.max(nums[i] + i, nums[i-1]);
             }
 
             int ind = 0;
             int ans = 0;
 
-            while(ind < nums.size() - 1)
+            while(ind < nums.length - 1)
             {
                 ans++;
                 ind = nums[ind];
             }
 
+            return ans;
+        }
+    }
+    class T11 {
+        //也可以再排序后使用二分查找找第一个比length-index》=的citation，用length-index作为ans
+        public int hIndex(int[] citations) {
+            Arrays.sort(citations);
+            int ans=0;
+            for(int i=citations.length-1;i>=0;i--){
+                if (citations[i]>ans) {
+                    ans++;
+                }else return ans;
+            }
+            return ans;
+        }
+    }
+    class RandomizedSet {
+
+        HashSet<Integer> hashSet=new HashSet<Integer>();
+        Random random=new Random();
+        public RandomizedSet() {
+        }
+
+        public boolean insert(int val) {
+            if(hashSet.contains(val))
+                return false;
+            else {
+                hashSet.add(val);
+                return true;
+            }
+        }
+        public boolean remove(int val) {
+            if (hashSet.contains(val)){
+                hashSet.remove(val);
+                return true;
+            }else
+                return false;
+        }
+
+        public int getRandom() {
+
+        }
+    }
+    class T13 {
+        public int[] productExceptSelf(int[] nums) {
+            int[] products= new int[2*nums.length];
+            int[] ans=new int[nums.length];
+            products[0]=1;
+            products[products.length-1]=1;
+            for(int i=0;i<nums.length-1;i++){
+                products[i+1]=nums[i]*products[i];
+                products[products.length-i-2]=nums[nums.length-i-1]*products[products.length-i-1];
+            }
+            for(int i=0;i<nums.length;i++){
+                ans[i]=products[i]*products[i+nums.length];
+            }
             return ans;
         }
     }
