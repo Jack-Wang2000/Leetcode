@@ -4,7 +4,9 @@ import java.util.*;
 public class Main {
 
     public static void main(String[] args) {
-        System.out.println(minSpeedOnTime(new int[]{1, 1, 10000}, 2.01));
+        int[] heights={0,1,0,2,1,0,1,3,2,1,2,1};
+        System.out.println(T16.trap(heights));
+
     }
 
     public static int minSpeedOnTime(int[] dist, double hour) {
@@ -269,10 +271,11 @@ public class Main {
         }
 
         public int getRandom() {
-
+            return 0;
         }
     }
     class T13 {
+        //Space complexity: ans stores prefix, another variable stores suffix.
         public int[] productExceptSelf(int[] nums) {
             int[] products= new int[2*nums.length];
             int[] ans=new int[nums.length];
@@ -286,6 +289,128 @@ public class Main {
                 ans[i]=products[i]*products[i+nums.length];
             }
             return ans;
+        }
+    }
+    class T14 {
+        //两个基本事实：
+        //如果n不是解，则数组所有元素之和为负
+        //如果从n开始，到n+m个加油站tank为赤字，则n到n+m都不能作为起点。
+        //原因是：车子每到一站的剩余油量必>=0，因此自变量是起始点，应变量是n+m站时车子的剩余油量的函数是一个单减函数，不论从n到n+m的每一个作为起始点应变量都不可能必n作为起始点大，因此n到n+m作为起始点每一种情况车子到n+m站时车子的剩余油量都为负
+        public int canCompleteCircuit(int[] gas, int[] cost) {
+            int n = gas.length;
+            int total_surplus = 0;
+            int surplus = 0;
+            int start = 0;
+
+            for(int i = 0; i < n; i++){
+                total_surplus += gas[i] - cost[i];
+                surplus += gas[i] - cost[i];
+                if(surplus < 0){
+                    surplus = 0;
+                    start = i + 1;
+                }
+            }
+            return (total_surplus < 0) ? -1 : start;
+        }
+    }
+    class T15 {
+        //the problem of sequential solution is that smaller element change will make larger neighbor change
+        //which is computing dependency, way to eliminate it:
+        //comparing left neighbor: left to right
+        //right neighbor: right to left
+        public int candy(int[] ratings) {
+            int n=ratings.length;
+            int[] res=new int[n];
+            Arrays.fill(res,1);
+            for(int i=1;i<n;i++){
+                if(ratings[i]>ratings[i-1]){
+                    res[i]=res[i-1]+1; //computing dependency
+                }
+            }
+            for (int i=n-1;i>0;i--){
+                if(ratings[i-1]>ratings[i]){
+                    res[i-1]=Math.max(res[i]+1,res[i-1]); //computing dependency
+                }
+            }
+            int sum=0;
+            for(int r:res) sum+=r;
+            return sum;
+        }
+    }
+    class T16 {
+        static public int trap(int[] height) {
+            int ans=0;
+            int vertical=0;
+            int horizon=height.length;
+            int[] walls=new int[height.length];//记录水池墙的拐角情况
+            Arrays.fill(walls,-1);
+            for(int i=0;i<height.length;i++){
+                int j;
+                for(j=0;j<horizon;j++){
+                    if(height[i]>=walls[j])
+                        break;
+                }
+                if(j!=horizon){  //如果存在小于等于当前高度，加入ans
+                    ans+=(height[i]-walls[j])*(i-j);
+                    vertical=height[i]; //代表
+                    for(int k=j;k<i;k++){
+                        if(walls[k]!=-1)
+
+                    }
+                }
+                if(height[i]>height[i+1])
+                    walls[i]=height[i];
+                else
+                    walls[i]=-1;
+            }
+            return ans;
+        }
+    }
+    class T17 {
+        public int trap(int[] height) {
+            if (height == null || height.length == 0) {
+                return 0;
+            }
+            int left = 0; int right = height.length - 1; // Pointers to both ends of the array.
+            int maxLeft = 0; int maxRight = 0;
+
+            int totalWater = 0;
+            while (left < right) {
+                // Water could, potentially, fill everything from left to right, if there is nothing in between.
+                if (height[left] < height[right]) {
+                    // If the current elevation is greater than the previous maximum, water cannot occupy that point at all.
+                    // However, we do know that everything from maxLeft to the current index, has been optimally filled, as we've
+                    // been adding water to the brim of the last maxLeft.
+                    if (height[left] >= maxLeft) {
+                        // So, we say we've found a new maximum, and look to see how much water we can fill from this point on.
+                        maxLeft = height[left];
+                        // If we've yet to find a maximum, we know that we can fill the current point with water up to the previous
+                        // maximum, as any more will overflow it. We also subtract the current height, as that is the elevation the
+                        // ground will be at.
+                    } else {
+                        totalWater += maxLeft - height[left];
+                    }
+                    // Increment left, we'll now look at the next point.
+                    left++;
+                    // If the height at the left is NOT greater than height at the right, we cannot fill from left to right without over-
+                    // flowing; however, we do know that we could potentially fill from right to left, if there is nothing in between.
+                } else {
+                    // Similarly to above, we see that we've found a height greater than the max, and cannot fill it whatsoever, but
+                    // everything before is optimally filled
+                    if (height[right] >= maxRight) {
+                        // We can say we've found a new maximum and move on.
+                        maxRight = height[right];
+                        // If we haven't found a greater elevation, we can fill the current elevation with maxRight - height[right]
+                        // water.
+                    } else {
+                        totalWater += maxRight - height[right];
+                    }
+                    // Decrement left, we'll look at the next point.
+                    right--;
+                }
+            }
+            // Return the sum we've been adding to.
+            return totalWater;
         }
     }
 }
