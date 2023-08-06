@@ -1,11 +1,12 @@
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.stream.IntStream;
 
 public class Main {
 
     public static void main(String[] args) {
-        int[] heights={0,1,0,2,1,0,1,3,2,1,2,1};
-        System.out.println(T16.trap(heights));
+        int[] heights = {0, 1, 0, 2, 1, 0, 1, 3, 2, 1, 2, 1};
+        System.out.println(T18.intToRoman(10));
 
     }
 
@@ -184,21 +185,22 @@ public class Main {
             return sum;
         }
     }
+
     class T9 {
         //递归
         public boolean canJump(int[] nums) {
-            return jumpTo(nums,nums.length-1);
+            return jumpTo(nums, nums.length - 1);
         }
-        public boolean jumpTo(int[] nums,int index){
-            if(index==0)
-                return true;
-            for(int i= index-1;i>=0;i--){
-                if(nums[i]>=index-i)
-                    return jumpTo(nums,i);
+
+        public boolean jumpTo(int[] nums, int index) {
+            if (index == 0) return true;
+            for (int i = index - 1; i >= 0; i--) {
+                if (nums[i] >= index - i) return jumpTo(nums, i);
             }
             return false;
         }
     }
+
     class T10 {
         //从数组前面开始递归
         public int jump(int[] nums) {
@@ -206,27 +208,24 @@ public class Main {
         }
 
         public int jumpTo(int[] nums, int index, int deep) {
-            if (index == 0)
-                return deep;
+            if (index == 0) return deep;
             for (int i = 0; i < index; i++) {
-                if (nums[i] >= index - i)
-                    return jumpTo(nums, i,++deep);
+                if (nums[i] >= index - i) return jumpTo(nums, i, ++deep);
             }
             return -1;
         }
+
         //nice!为每个元素找出从他及之前的元素最远能走到的地方w
         public int jump_Nice(int[] nums) {
 
-            for(int i = 1; i < nums.length; i++)
-            {
-                nums[i] = Math.max(nums[i] + i, nums[i-1]);
+            for (int i = 1; i < nums.length; i++) {
+                nums[i] = Math.max(nums[i] + i, nums[i - 1]);
             }
 
             int ind = 0;
             int ans = 0;
 
-            while(ind < nums.length - 1)
-            {
+            while (ind < nums.length - 1) {
                 ans++;
                 ind = nums[ind];
             }
@@ -234,63 +233,67 @@ public class Main {
             return ans;
         }
     }
+
     class T11 {
         //也可以再排序后使用二分查找找第一个比length-index》=的citation，用length-index作为ans
         public int hIndex(int[] citations) {
             Arrays.sort(citations);
-            int ans=0;
-            for(int i=citations.length-1;i>=0;i--){
-                if (citations[i]>ans) {
+            int ans = 0;
+            for (int i = citations.length - 1; i >= 0; i--) {
+                if (citations[i] > ans) {
                     ans++;
-                }else return ans;
+                } else return ans;
             }
             return ans;
         }
     }
-    class RandomizedSet {
 
-        HashSet<Integer> hashSet=new HashSet<Integer>();
-        Random random=new Random();
-        public RandomizedSet() {
-        }
+    class T12 {
+
+        HashSet<Integer> hashSet = new HashSet<Integer>();
+        Random random = new Random();
+
+/*        public RandomizedSet() {
+        }*/
 
         public boolean insert(int val) {
-            if(hashSet.contains(val))
-                return false;
+            if (hashSet.contains(val)) return false;
             else {
                 hashSet.add(val);
                 return true;
             }
         }
+
         public boolean remove(int val) {
-            if (hashSet.contains(val)){
+            if (hashSet.contains(val)) {
                 hashSet.remove(val);
                 return true;
-            }else
-                return false;
+            } else return false;
         }
 
         public int getRandom() {
             return 0;
         }
     }
+
     class T13 {
         //Space complexity: ans stores prefix, another variable stores suffix.
         public int[] productExceptSelf(int[] nums) {
-            int[] products= new int[2*nums.length];
-            int[] ans=new int[nums.length];
-            products[0]=1;
-            products[products.length-1]=1;
-            for(int i=0;i<nums.length-1;i++){
-                products[i+1]=nums[i]*products[i];
-                products[products.length-i-2]=nums[nums.length-i-1]*products[products.length-i-1];
+            int[] products = new int[2 * nums.length];
+            int[] ans = new int[nums.length];
+            products[0] = 1;
+            products[products.length - 1] = 1;
+            for (int i = 0; i < nums.length - 1; i++) {
+                products[i + 1] = nums[i] * products[i];
+                products[products.length - i - 2] = nums[nums.length - i - 1] * products[products.length - i - 1];
             }
-            for(int i=0;i<nums.length;i++){
-                ans[i]=products[i]*products[i+nums.length];
+            for (int i = 0; i < nums.length; i++) {
+                ans[i] = products[i] * products[i + nums.length];
             }
             return ans;
         }
     }
+
     class T14 {
         //两个基本事实：
         //如果n不是解，则数组所有元素之和为负
@@ -302,10 +305,10 @@ public class Main {
             int surplus = 0;
             int start = 0;
 
-            for(int i = 0; i < n; i++){
+            for (int i = 0; i < n; i++) {
                 total_surplus += gas[i] - cost[i];
                 surplus += gas[i] - cost[i];
-                if(surplus < 0){
+                if (surplus < 0) {
                     surplus = 0;
                     start = i + 1;
                 }
@@ -313,66 +316,41 @@ public class Main {
             return (total_surplus < 0) ? -1 : start;
         }
     }
+
     class T15 {
         //the problem of sequential solution is that smaller element change will make larger neighbor change
         //which is computing dependency, way to eliminate it:
         //comparing left neighbor: left to right
         //right neighbor: right to left
         public int candy(int[] ratings) {
-            int n=ratings.length;
-            int[] res=new int[n];
-            Arrays.fill(res,1);
-            for(int i=1;i<n;i++){
-                if(ratings[i]>ratings[i-1]){
-                    res[i]=res[i-1]+1; //computing dependency
+            int n = ratings.length;
+            int[] res = new int[n];
+            Arrays.fill(res, 1);
+            for (int i = 1; i < n; i++) {
+                if (ratings[i] > ratings[i - 1]) {
+                    res[i] = res[i - 1] + 1; //computing dependency
                 }
             }
-            for (int i=n-1;i>0;i--){
-                if(ratings[i-1]>ratings[i]){
-                    res[i-1]=Math.max(res[i]+1,res[i-1]); //computing dependency
+            for (int i = n - 1; i > 0; i--) {
+                if (ratings[i - 1] > ratings[i]) {
+                    res[i - 1] = Math.max(res[i] + 1, res[i - 1]); //computing dependency
                 }
             }
-            int sum=0;
-            for(int r:res) sum+=r;
+            int sum = 0;
+            for (int r : res) sum += r;
             return sum;
         }
     }
-    class T16 {
-        static public int trap(int[] height) {
-            int ans=0;
-            int vertical=0;
-            int horizon=height.length;
-            int[] walls=new int[height.length];//记录水池墙的拐角情况
-            Arrays.fill(walls,-1);
-            for(int i=0;i<height.length;i++){
-                int j;
-                for(j=0;j<horizon;j++){
-                    if(height[i]>=walls[j])
-                        break;
-                }
-                if(j!=horizon){  //如果存在小于等于当前高度，加入ans
-                    ans+=(height[i]-walls[j])*(i-j);
-                    vertical=height[i]; //代表
-                    for(int k=j;k<i;k++){
-                        if(walls[k]!=-1)
 
-                    }
-                }
-                if(height[i]>height[i+1])
-                    walls[i]=height[i];
-                else
-                    walls[i]=-1;
-            }
-            return ans;
-        }
-    }
-    class T17 {
+    class T16 {
         public int trap(int[] height) {
             if (height == null || height.length == 0) {
                 return 0;
             }
-            int left = 0; int right = height.length - 1; // Pointers to both ends of the array.
-            int maxLeft = 0; int maxRight = 0;
+            int left = 0;
+            int right = height.length - 1; // Pointers to both ends of the array.
+            int maxLeft = 0;
+            int maxRight = 0;
 
             int totalWater = 0;
             while (left < right) {
@@ -411,6 +389,166 @@ public class Main {
             }
             // Return the sum we've been adding to.
             return totalWater;
+        }
+    }
+
+    class T17 {
+        public int romanToInt(String s) {
+            int ans = 0;
+            int[] temp = new int[s.length()];
+            for (int i = 0; i < s.length(); i++) {
+                switch (s.charAt(i)) {
+                    case 'I':
+                        temp[i] = 1;
+                        break;
+                    case 'V':
+                        temp[i] = 5;
+                        break;
+                    case 'X':
+                        temp[i] = 10;
+                        break;
+                    case 'L':
+                        temp[i] = 50;
+                        break;
+                    case 'C':
+                        temp[i] = 100;
+                        break;
+                    case 'D':
+                        temp[i] = 500;
+                        break;
+                    case 'M':
+                        temp[i] = 1000;
+                        break;
+                }
+            }
+            for (int i = 0; i < s.length() - 1; i++) {
+                if (temp[i] < temp[i + 1]) temp[i] *= -1;
+            }
+            for (int i : temp) {
+                ans += i;
+            }
+            return ans;
+        }
+    }
+
+    class T18 {
+        //本题考查如何将一个int值的每一位提取出来
+        //num%10提取个位
+        //num/10删除个位
+        //直到num==0
+        static public String intToRoman(int num) {
+            int x = num % 10;
+            char[] ans = new char[21];
+            int ansp = 20;
+            char[] symbol = {'I', 'V', 'X', 'L', 'C', 'D', 'M'};
+            int p = 0;
+            while (num != 0) {
+                if (x < 4) {
+                    for (int i = 0; i < x; i++)
+                        ans[ansp--] = symbol[p];
+                } else if (x == 4) {
+                    ans[ansp--] = symbol[p + 1];
+                    ans[ansp--] = symbol[p];
+                } else if (x < 9) {
+                    for (int i = 0; i < x - 5; i++)
+                        ans[ansp--] = symbol[p];
+                    ans[ansp--] = symbol[p + 1];
+
+                } else {
+                    ans[ansp--] = symbol[p + 2];
+                    ans[ansp--] = symbol[p];
+                }
+                p += 2;
+                num /= 10;
+                x = num % 10;
+            }
+            return String.valueOf(ans).trim();
+        }
+
+        //空间换时间
+        static public String intToRoman1(int num) {
+            int[] values = {1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1};
+            String[] strs = {"M", "CM", "D", "CD", "C", "XC", "L", "XL", "X", "IX", "V", "IV", "I"};
+
+            StringBuilder sb = new StringBuilder();
+
+            for (int i = 0; i < values.length; i++) {
+                while (num >= values[i]) {
+                    num -= values[i];
+                    sb.append(strs[i]);
+                }
+            }
+            return sb.toString();
+        }
+
+    }
+
+    class T19 {
+        public int lengthOfLastWord(String s) {
+            int length = 0;
+            for (int i = s.length() - 1; i >= 0; i--) {
+                if (s.charAt(i) == ' ' && length != 0) {
+                    return length;
+                } else
+                    length++;
+            }
+            return length;
+        }
+    }
+
+    class T20 {
+        //sort the array by dictionary sequence and compare the first word and the last word, those which between them all have the same prefix
+        public String longestCommonPrefix1(String[] strs) {
+            Arrays.sort(strs);
+            String s1 = strs[0];
+            String s2 = strs[strs.length-1];
+            int idx = 0;
+            while(idx < s1.length() && idx < s2.length()){
+                if(s1.charAt(idx) == s2.charAt(idx)){
+                    idx++;
+                } else {
+                    break;
+                }
+            }
+            return s1.substring(0, idx);
+        }
+        //violent solution
+        public String longestCommonPrefix(String[] strs) {
+            String prefix = strs[0];
+            for (int i = 1; i < strs.length; i++) {
+                int[] cps1 = prefix.codePoints().toArray();
+                int[] cps2 = strs[i].codePoints().toArray();
+                int j = 0;
+                if (!prefix.equals(strs[i].substring(0, prefix.length()))) {
+                    for (; j < prefix.length() && j < strs[i].length(); j++) {
+                        if (cps1[j] != cps2[j])
+                            break;
+                    }//find the first different character
+                    if (j != prefix.length()) {
+                        prefix = prefix.substring(0, j);
+                        if (j == 0)
+                            return prefix;
+                    }
+                }
+            }
+            return prefix;
+        }
+        class T21{
+            public String reverseWords(String s) {
+                String ans="";
+                int start=0;
+                s=s.trim();
+                for(int i=0;i<s.length();i++){
+                    if(s.charAt(i)==' '){
+                        for(;i<s.length();i++)
+                            if(s.charAt(i)!=' ')
+                                break;
+                        ans+=s.substring(start,i+1)+' ';
+                        start=i;
+                    }
+                }
+                return ans;
+            }
         }
     }
 }
