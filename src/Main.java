@@ -5,9 +5,9 @@ import java.util.stream.IntStream;
 public class Main {
 
     public static void main(String[] args) {
-        int[] heights = {0, 1, 0, 2, 1, 0, 1, 3, 2, 1, 2, 1};
-        System.out.println(T18.intToRoman(10));
-
+//        int[] heights = {0, 1, 0, 2, 1, 0, 1, 3, 2, 1, 2, 1};
+//        System.out.println(T18.intToRoman(10));
+        T125.isPalindrome("A man, a plan, a canal: Panama");
     }
 
     public static int minSpeedOnTime(int[] dist, double hour) {
@@ -549,6 +549,72 @@ public class Main {
                 }
                 return ans;
             }
+        }
+    }
+    class T125 {
+        private static boolean isAlphanumeric(char c){
+            return (c>='a'&&c<='z')||(c>='A'&&c<='Z')||(c>='0'&&c<='9');
+        }
+        public static boolean isPalindrome(String s) {
+            s=s.toLowerCase();
+            int p1=0;
+            int p2=s.length()-1;
+            while(p1<=p2){
+                if(!isAlphanumeric(s.charAt(p1)))
+                    p1++;
+                else if(!isAlphanumeric(s.charAt(p2)))
+                    p2--;
+                else if(s.charAt(p1++)!=s.charAt(p2--))
+                    return false;
+            }
+            return true;
+        }
+    }
+    class T392 {
+        public boolean isSubsequence(String s, String t) {
+            int p1=0;
+            int p2=0;
+            while(p1<s.length()&&p2<t.length()){
+                if(s.charAt(p1)==t.charAt(p2++))
+                    p1++;
+            }
+            if(p1==s.length())
+                return true;
+            else
+                return false;
+        }
+    }
+    class T167 {
+        public int[] twoSum(int[] numbers, int target) {
+            int p1=0;
+            int p2=1;
+            while(p2<numbers.length-1&&numbers[p1]+numbers[p2]<target){
+                p2++;
+            }
+            while(numbers[p1]+numbers[p2]!=target){
+                if(numbers[p1]+numbers[p2]>target)
+                    p2--;
+                else if(p2==numbers.length-1||numbers[p1]+numbers[p2]<target)
+                    p1++;
+            }
+            return new int[]{p1+1,p2+1};
+        }
+    }
+    class T11ContainerWithMostWater{
+        //双指针重要的是
+        //判断起始位置和指针移动规则
+        public int maxArea(int[] height) {
+            int max=0;
+            int p1=0;
+            int p2=height.length-1;
+            while (p1<p2){
+                max = Math.max(max,(p2-p1)*Math.max(height[p2],height[p1]));
+                if(height[p1]<height[p2])
+                    p1++;
+                else
+                    p2--;
+            }
+            return max;
         }
     }
 }
